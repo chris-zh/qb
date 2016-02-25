@@ -8,6 +8,7 @@ from .forms import NameForm
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
+    print('helloworldddd')
     form = NameForm()
     if form.validate_on_submit():
         # ...
@@ -16,3 +17,4 @@ def index():
                            form=form, name=session.get('name'),
                            known=session.get('known', False),
                            current_time=datetime.utcnow())
+

@@ -8,6 +8,14 @@ app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 manager = Manager(app)
 migrate = Migrate(app, db)
 
+from flask_login import login_required
+
+
+@app.route('/secret')
+@login_required
+def secret():
+    return 'Only authenticated users are allowed!'
+
 
 def make_shell_context():
     return dict(app=app, db=db, User=User, Role=Role)
