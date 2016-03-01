@@ -6,6 +6,9 @@ from flask_login import UserMixin, AnonymousUserMixin
 from . import login_manager
 from itsdangerous import TimedJSONWebSignatureSerializer as Serializer
 from flask import current_app
+from flask import request
+import hashlib
+from flask import url_for
 
 
 # from . import db
@@ -64,6 +67,7 @@ class User(UserMixin, db.Model):
     password_hash = db.Column(db.String(128))
     confirmed = db.Column(db.Boolean, default=False)
     row_id = db.Column(db.Integer, db.ForeignKey('roles.id'))
+    posts = db.relationship('Post', backref='author', lazy='dynamic')
 
     name = db.Column(db.String(64))
     location = db.Column(db.String(64))
@@ -120,6 +124,15 @@ class User(UserMixin, db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
+    def gravatar(self, size=100, default='identicon', rating='g'):
+        if request.is_secure:
+            url = ''
+        else:
+            url = ''
+        # hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
+        my_url = 'http://127.0.0.1:5000/static/favicon.ico'
+        return my_url
+
 
 class AnonymousUser(AnonymousUserMixin):
     def can(self, permissions):
@@ -130,3 +143,11 @@ class AnonymousUser(AnonymousUserMixin):
 
 
 login_manager.anonymous_user = AnonymousUser
+
+
+class Post(db.Model):
+    __tablename__ = 'posts'
+    id = db.Column(db.Integer, primary_key=True)
+    body = db.Column(db.Text)
+    timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+    author_id = db.Column(db.Integer, db.ForeignKey('users.id'))

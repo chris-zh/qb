@@ -93,3 +93,13 @@ def resend_confirmation():
                'auth/email/confirm', user=current_user, token=token)
     flash('A new confirmation email has been sent to you by email.')
     return redirect(url_for('main.index'))
+
+
+@auth.route('/change-password')
+def change_password():
+    pass
+
+
+@auth.route('/change-email-request')
+def change_email_request():
+    pass
