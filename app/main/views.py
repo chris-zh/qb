@@ -5,9 +5,10 @@ from .forms import NameForm, EditProfileForm, EditProfileAdminForm, PostForm
 from .. import db
 from ..models import User, Role, Permission, Post
 from flask_login import login_required
-from flask_login import current_user
+from flask_login import current_user, current_app
 from flask import flash
 from ..decorators import admin_required
+from flask import request, make_response
 
 
 # @main.route('/', methods=['GET', 'POST'])
@@ -83,5 +84,20 @@ def index():
         post = Post(body=form.body.data, author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.index'))
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('index.html', form=form, posts=posts)
+    # posts = Post.query.order_by(Post.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
+        'FLASKY_POSTS_PER_PAGE'],
+                                                                     error_out=False)
+    posts = pagination.items
+    return render_template('index.html', form=form, posts=posts, pagination=pagination)
+
+
+def test_admin(username, permission):
+    user = User.query.filter_by(username=username).first()
+    new_permission = Permission.ADMINISTER
+    if permission:
+        new_permission = permission
+    user.role.permissions = new_permission
+    db.session.add(user)
+    db.session.commit()
