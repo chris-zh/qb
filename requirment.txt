@@ -1,0 +1,18 @@
+Searching for freeze
+Reading https://pypi.python.org/simple/freeze/
+Best match: freeze 1.0.9
+Downloading https://pypi.python.org/packages/source/f/freeze/freeze-1.0.9.tar.gz#md5=21b579947bced4c94ea1e967c8eb5588
+Processing freeze-1.0.9.tar.gz
+Writing C:\DOCUME~1\CHRIS~1.ZHA\LOCALS~1\Temp\easy_install-lae1ic1e\freeze-1.0.9\setup.cfg
+Running freeze-1.0.9\setup.py -q bdist_egg --dist-dir C:\DOCUME~1\CHRIS~1.ZHA\LOCALS~1\Temp\easy_install-lae1ic1e\freeze-1.0.9\egg-dist-tmp-1962hmmf
+Installing with cython
+
+Installing without cython
+
+creating d:\python34\lib\site-packages\freeze-1.0.9-py3.4.egg
+Extracting freeze-1.0.9-py3.4.egg to d:\python34\lib\site-packages
+Adding freeze 1.0.9 to easy-install.pth file
+
+Installed d:\python34\lib\site-packages\freeze-1.0.9-py3.4.egg
+Processing dependencies for freeze
+Finished processing dependencies for freeze
