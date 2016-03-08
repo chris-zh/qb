@@ -8,8 +8,10 @@ from flask_login import login_required
 from flask_login import current_user, current_app
 from flask import flash
 from ..decorators import admin_required, permission_required
-from flask import request, make_response
+from flask import request
+from ..fileProcess import generate_thumbnail as cut_image
 import os
+
 
 
 @main.route('/user/<username>')
@@ -246,10 +248,14 @@ def upload_file():
         if file and allowed_file(file.filename):
             filename = file.filename
             user = current_user._get_current_object()
-            user.personal_gravatar = filename
-            print(os.path.join(current_app.config['UPLOAD_FOLDER']), filename)
-            file.save(os.path.join(current_app.config['UPLOAD_FOLDER'], filename))
+            tmp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+            file.save(tmp_file_path)
+            small_image = cut_image(tmp_file_path, 'small', (35, 35))
+            big_image = cut_image(tmp_file_path, 'big', (250, 250))
+            user.small_image = small_image
+            user.big_image = big_image
             db.session.add(user)
+            os.remove(tmp_file_path)
             flash('上传成功！')
             return redirect(url_for('main.index',
                                     filename=filename))

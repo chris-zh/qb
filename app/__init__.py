@@ -6,6 +6,7 @@ from flask_sqlalchemy import SQLAlchemy
 from config import config
 from flask_login import LoginManager
 from flask_pagedown import PageDown
+import os
 
 
 bootstrap = Bootstrap()
@@ -35,4 +36,9 @@ def create_app(config_name):
 
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
+    upload_path = app.root_path + '\\static\\uploads'
+    app.config['UPLOAD_FOLDER'] = upload_path
+    if not os.path.exists(upload_path):
+        os.mkdir(app.config['UPLOAD_FOLDER'])
+    print()
     return app

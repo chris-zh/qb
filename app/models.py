@@ -82,7 +82,8 @@ class User(UserMixin, db.Model):
     about_me = db.Column(db.Text())
     member_since = db.Column(db.DateTime(), default=datetime.utcnow)
     last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
-    personal_gravatar = db.Column(db.Text())
+    small_image = db.Column(db.Text(), default='default_small.jpg')
+    big_image = db.Column(db.Text(), default='default_big.jpg')
     followed = db.relationship('Follow',
                                foreign_keys=[Follow.follower_id],
                                backref=db.backref('follower', lazy='joined'),
@@ -147,7 +148,7 @@ class User(UserMixin, db.Model):
         else:
             url = ''
         # hash = hashlib.md5(self.email.encode('utf-8')).hexdigest()
-        my_url = '/static/uploads/' + str(self.personal_gravatar)
+        my_url = current_app.config['UPLOAD_FOLDER'] + str(self.small_image)
         return my_url
 
     def follow(self, user):
