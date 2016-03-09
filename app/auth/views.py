@@ -47,7 +47,7 @@ def register():
         return redirect(url_for('main.index'))
         # flash('You can now login.')
         # return redirect(url_for('auth.login'))
-    flash('提示：用太平邮箱注册')
+    flash('提示：用国内邮箱注册')
     return render_template('auth/register.html', form=form)
 
 
