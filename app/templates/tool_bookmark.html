@@ -1,0 +1,42 @@
+{% extends 'tool_index.html' %}
+{% block tool_content %}
+{% import "bootstrap/wtf.html" as wtf %}
+<div class="panel panel-default">
+    <!-- Default panel contents -->
+    <div class="panel-heading">URL List</div>
+    <!-- Table -->
+    <table class="table">
+        <tbody>
+        {% for bookmark in bookmarks%}
+        <tr>
+            <td title="{{bookmark.url}}"><a href="{{bookmark.url}}">{{bookmark.name}}</a>
+                <input type="hidden" name="{{bookmark.id}}" value="{{bookmark.url}}">
+            </td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="add_mark_area">
+    {{ wtf.quick_form(form) }}
+</div>
+<div>
+    <button name="addBookmark" class="add_mark_button btn btn-default">新增书签</button>
+</div>
+{% endblock%}
+{% block scripts %}
+{{ super() }}
+<script>
+$(".add_mark_button").click(
+    function(){
+        $(".add_mark_area").attr("class", "block")
+        $(".add_mark_button").remove()
+        $(".cancelBookmark").attr("class", "block  btn btn-default")
+    }
+)
+
+
+
+
+</script>
+{% endblock %}

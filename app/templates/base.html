@@ -30,6 +30,10 @@
                 {% if current_user.can(Permission.MODERATE_COMMENTS) %}
                 <li><a href="{{ url_for('main.moderate') }}">Moderate Comments</a></li>
                 {% endif %}
+                {% if current_user.can(Permission.ADMINISTER) %}
+                <li><a href="{{ url_for('main.tool_index') }}">工具</a></li>
+                {% endif %}
+                <li><a href="http://10.7.219.77:8080/company/">链接</a> </li>
             </ul>
 
             <ul class="nav navbar-nav navbar-right">

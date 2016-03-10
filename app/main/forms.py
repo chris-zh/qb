@@ -3,6 +3,7 @@ from wtforms import StringField, SubmitField, TextAreaField, BooleanField, Selec
 from wtforms.validators import Required, Length, Email, Regexp, ValidationError
 from ..models import Role, User
 from flask_pagedown.fields import PageDownField
+from wtforms import FileField
 
 
 class NameForm(Form):
@@ -14,6 +15,7 @@ class EditProfileForm(Form):
     name = StringField('Real name', validators=[Length(0, 64)])
     location = StringField('Location', validators=[Length(0, 64)])
     about_me = TextAreaField('About me')
+    image = FileField('头像')
     submit = SubmitField('Submit')
 
 
@@ -29,6 +31,7 @@ class EditProfileAdminForm(Form):
     name = StringField('Real name', validators=[Length(0, 64)])
     location = StringField('Location', validators=[Length(0, 64)])
     about_me = TextAreaField('About me')
+    image = FileField('头像')
     submit = SubmitField('Submit')
 
     def __init__(self, user, *args, **kwargs):
@@ -55,3 +58,17 @@ class PostForm(Form):
 class CommentForm(Form):
     body = StringField('', validators=[Required()])
     submit = SubmitField('Submit')
+
+
+class BookmarkForm(Form):
+    name = StringField('书签名', validators=[Required()])
+    url = StringField('URL', validators=[Required()])
+    submit = SubmitField('提交')
+
+
+class MailForm(Form):
+    sender = StringField('发件人', validators=[Required()])
+    receiver = StringField('收件人', validators=[Required()])
+    subject = StringField('标题', validators=[Required()])
+    context = TextAreaField('内容(支持markdown格式)', validators=[Required()])
+    submit = SubmitField('发送')

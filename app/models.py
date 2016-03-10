@@ -257,6 +257,14 @@ class Comment(db.Model):
             tags=allowed_tags, strip=True))
 
 
+class Bookmark(db.Model):
+    __tablename__ = 'bookmarks'
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    url = db.Column(db.Text)
+    network = db.Column(db.Text)
+
+
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 db.event.listen(Post.body, 'set', Post.on_change_body)
 login_manager.anonymous_user = AnonymousUser

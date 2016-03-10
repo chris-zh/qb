@@ -1,7 +1,6 @@
-from datetime import datetime
-from flask import render_template, session, redirect, url_for, abort
+from flask import render_template, redirect, url_for, abort
 from . import main
-from .forms import NameForm, EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
+from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
 from .. import db
 from ..models import User, Role, Permission, Post, Comment
 from flask_login import login_required
@@ -11,7 +10,8 @@ from ..decorators import admin_required, permission_required
 from flask import request
 from ..fileProcess import generate_thumbnail as cut_image
 import os
-
+from ..models import Bookmark
+from .forms import BookmarkForm
 
 
 @main.route('/user/<username>')
@@ -31,6 +31,7 @@ def edit_profile():
         current_user.name = form.name.data
         current_user.location = form.location.data
         current_user.about_me = form.location.data
+        save_image(form.image.data)
         db.session.add(current_user)
         flash('Your profile has been updated.')
         return redirect(url_for('.user', username=current_user.username))
@@ -54,6 +55,7 @@ def edit_profile_admin(id):
         user.name = form.name.data
         user.location = form.location.data
         user.about_me = form.about_me.data
+        save_image(form.image.data)
         db.session.add(user)
         flash('The profile has been updated.')
         return redirect(url_for('.user', username=user.username))
@@ -75,7 +77,6 @@ def index():
         post = Post(body=form.body.data, author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('.index'))
-    # posts = Post.query.order_by(Post.timestamp.desc()).all()
     page = request.args.get('page', 1, type=int)
     pagination = Post.query.order_by(Post.timestamp.desc()).paginate(page, per_page=current_app.config[
         'FLASKY_POSTS_PER_PAGE'],
@@ -240,23 +241,58 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1] in ['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif']
 
 
-@main.route('/upload-file', methods=['GET', 'POST'])
-@login_required
-def upload_file():
-    if request.method == 'POST':
-        file = request.files['file']
-        if file and allowed_file(file.filename):
-            filename = file.filename
-            user = current_user._get_current_object()
-            tmp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
-            file.save(tmp_file_path)
-            small_image = cut_image(tmp_file_path, 'small', (35, 35))
-            big_image = cut_image(tmp_file_path, 'big', (250, 250))
-            user.small_image = small_image
-            user.big_image = big_image
-            db.session.add(user)
-            os.remove(tmp_file_path)
-            flash('上传成功！')
-            return redirect(url_for('main.index',
-                                    filename=filename))
-    return render_template('upload_file.html')
+# 保存用户头像
+def save_image(file):
+    try:
+        filename = file.filename
+        user = current_user._get_current_object()
+        tmp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
+        file.save(tmp_file_path)
+        small_image = cut_image(tmp_file_path, 'small', (35, 35))
+        big_image = cut_image(tmp_file_path, 'big', (250, 250))
+        user.small_image = small_image
+        user.big_image = big_image
+        db.session.add(user)
+        os.remove(tmp_file_path)
+        return True
+    except IOError:
+        return False
+
+
+@main.route('/tool-index')
+def tool_index():
+    return render_template('tool_index.html')
+
+
+@main.route('/tool-bookmark', methods=['POST', 'GET'])
+def tool_bookmark():
+    form = BookmarkForm()
+    bookmarks = Bookmark.query.all()
+    if form.validate_on_submit():
+        new_bookmark = Bookmark(name=form.name.data, url=form.url.data)
+        db.session.add(new_bookmark)
+        return redirect(url_for('.tool_bookmark'))
+    return render_template('tool_bookmark.html', bookmarks=bookmarks, form=form)
+
+
+from .forms import MailForm
+from ..email import send_email_cust
+from markdown import markdown
+import bleach
+
+
+@main.route('/tool-mail', methods=['POST', 'GET'])
+def tool_mail():
+    form = MailForm()
+    if form.validate_on_submit():
+        receivers = form.receiver.data
+        allowed_tags = ['a', 'abbr', 'acronym', 'b', 'blockquote', 'code',
+                        'em', 'i', 'li', 'ol', 'pre', 'strong', 'ul',
+                        'h1', 'h2', 'h3', 'p']
+        body_html = bleach.linkify(
+            bleach.clean(markdown(form.context.data, ouput_format='html'), tags=allowed_tags, strip=True))
+        send_email_cust(form.sender.data, receivers, form.subject.data, body_html)
+        print(markdown(form.context.data, ouput_format='html'))
+        print(body_html)
+        return redirect(url_for('.tool_mail'))
+    return render_template('tool_mail.html', form=form)

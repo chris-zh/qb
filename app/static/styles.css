@@ -105,3 +105,29 @@ div.flask-pagedown-preview h3 {
 .table.followers tr {
     border-bottom: 1px solid #e0e0e0;
 }
+
+.tool_nav {
+    margin-left: 100px;
+    width: 200px;
+    float: left;
+}
+
+.tool_content {
+    margin-left: 20px;
+    float: left;
+    width: 850px;
+}
+
+.add_mark_area{
+    display: none;
+    float:left;
+}
+
+.cancelBookmark_none{
+    display: none;
+    float: left;
+}
+
+.new_bookmark{
+    float:left
+}

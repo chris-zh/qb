@@ -18,3 +18,14 @@ def send_email(to, subject, template, **kwargs):
     thr = Thread(target=send_async_email, args=[app, msg])
     thr.start()
     return thr
+
+
+def send_email_cust(sender, receiver, subject, context, **kwargs):
+    app = current_app._get_current_object()
+    msg = Message(subject,
+                  sender=sender, recipients=[receiver])
+    msg.body = context
+    msg.html = context
+    thr = Thread(target=send_async_email, args=[app, msg])
+    thr.start()
+    return thr

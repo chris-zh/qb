@@ -1,12 +1,22 @@
+from flask import flash
+from flask import render_template
+from flask import redirect
+from flask import request
+from flask import url_for
+from flask_login import current_user
+from flask_login import login_required
+from flask_login import login_user
+from flask_login import logout_user
 from . import auth
-from flask import render_template, redirect, request, url_for, flash
-from flask_login import login_user, login_required, logout_user
-from ..models import User
-from .forms import LoginForm, RegistrationForm, PasswordResetRequestForm, ChangePasswordForm, ChangeEmailForm, \
-    PasswordResetForm
-from .. import db
+from .forms import ChangeEmailForm
+from .forms import ChangePasswordForm
+from .forms import LoginForm
+from .forms import PasswordResetForm
+from .forms import PasswordResetRequestForm
+from .forms import RegistrationForm
 from ..email import send_email
-from flask_login import current_user, current_app
+from ..models import db
+from ..models import User
 
 
 @auth.route('/login', methods=['GET', 'POST'])
@@ -174,5 +184,3 @@ def change_email(token):
     else:
         flash('Invalid request.')
     return redirect(url_for('main.index'))
-
-
