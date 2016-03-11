@@ -1,0 +1,82 @@
+{% extends 'tool_index.html' %}
+<style>
+    .version_color{
+    color: #B91B2A !important;
+    }
+</style>
+{% block tool_content %}
+<div class="panel panel-default">
+    <div class="panel-heading">
+        版本号:
+        <mark>{{current_version}}</mark>
+        第
+        <mark>{{week_number}}</mark>
+        周
+    </div>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th>姓名</th>
+            <th>请假原因</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for item in overtimes %}
+        <tr>
+            <td>{{item.apply_name}}</td>
+            <td>{{item.apply_reason}}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div>
+    <form class="ver-form">
+        <input type="text" class="form-control ver-name" name="apply_name" placeholder="姓名"/>
+        <input type="text" class="form-control ver-reason" name="apply_reason" placeholder="请假原因"/>
+        <input type="hidden" name="current_version" value="{{current_version}}"/>
+        <input type="hidden" name="week_number" value="{{week_number}}"/>
+        <button class="btn btn-default ver-add">新增</button>
+        <button class="btn btn-default ver-cancel">取消</button>
+        <button class="btn btn-default ver-submit">提交</button>
+    </form>
+</div>
+{% endblock%}
+{% block scripts %}
+{{super()}}
+<script>
+$(".ver-add").click(
+    function(){
+        console.log($(".ver-name").val())
+    }
+)
+
+$(".ver-submit").click(
+    function(){
+        $(".ver-form").attr("method", "POST")
+        $(".ver-form").submit()
+    }
+
+/**$(".ver-submit").click(
+    function(){
+        var version_data = {"apply_name":$(".ver-name").val(),"apply_reason":$(".ver-reason").val(),"current_version":"{{current_version}}","week_number":"{{week_number}}"};
+        console.log(version_data);
+        $.post("{{url_for(".tool_overtime")}}",
+            JSON.stringify(version_data),
+            function(data, status){
+                console.log(data)
+            },
+            "json"
+        );
+    }
+**/
+);
+
+
+
+
+
+
+</script>
+{% endblock %}

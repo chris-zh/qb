@@ -40,5 +40,4 @@ def create_app(config_name):
     app.config['UPLOAD_FOLDER'] = upload_path
     if not os.path.exists(upload_path):
         os.mkdir(app.config['UPLOAD_FOLDER'])
-    print()
     return app

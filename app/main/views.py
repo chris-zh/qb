@@ -1,17 +1,38 @@
-from flask import render_template, redirect, url_for, abort
-from . import main
-from .forms import EditProfileForm, EditProfileAdminForm, PostForm, CommentForm
-from .. import db
-from ..models import User, Role, Permission, Post, Comment
-from flask_login import login_required
-from flask_login import current_user, current_app
-from flask import flash
-from ..decorators import admin_required, permission_required
-from flask import request
-from ..fileProcess import generate_thumbnail as cut_image
 import os
-from ..models import Bookmark
+import bleach
+from flask import jsonify
+from flask import abort
+from flask import flash
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import url_for
+from flask import make_response
+from flask_login import current_app
+from flask_login import current_user
+from flask_login import login_required
+
+from . import main
 from .forms import BookmarkForm
+from .forms import CommentForm
+from .forms import EditProfileAdminForm
+from .forms import EditProfileForm
+from .forms import MailForm
+from .forms import PostForm
+
+from .. import db
+from ..decorators import admin_required
+from ..decorators import permission_required
+from ..email import send_email_cust
+from ..fileProcess import make_thumb
+from ..models import Bookmark
+from ..models import Comment
+from ..models import Role
+from ..models import Permission
+from ..models import Post
+from ..models import User
+from ..orcl_models import Overtime
+from markdown import markdown
 
 
 @main.route('/user/<username>')
@@ -248,8 +269,8 @@ def save_image(file):
         user = current_user._get_current_object()
         tmp_file_path = os.path.join(current_app.config['UPLOAD_FOLDER'], filename)
         file.save(tmp_file_path)
-        small_image = cut_image(tmp_file_path, 'small', (35, 35))
-        big_image = cut_image(tmp_file_path, 'big', (250, 250))
+        small_image = make_thumb(tmp_file_path, 'small', current_app.config['SMALL_IMAGE_SIZE'])
+        big_image = make_thumb(tmp_file_path, 'big', current_app.config['BIG_IMAGE_SIZE'])
         user.small_image = small_image
         user.big_image = big_image
         db.session.add(user)
@@ -275,12 +296,6 @@ def tool_bookmark():
     return render_template('tool_bookmark.html', bookmarks=bookmarks, form=form)
 
 
-from .forms import MailForm
-from ..email import send_email_cust
-from markdown import markdown
-import bleach
-
-
 @main.route('/tool-mail', methods=['POST', 'GET'])
 def tool_mail():
     form = MailForm()
@@ -296,3 +311,35 @@ def tool_mail():
         print(body_html)
         return redirect(url_for('.tool_mail'))
     return render_template('tool_mail.html', form=form)
+
+
+@main.route('/tool-overtime', methods=['POST', 'GET'])
+def tool_overtime():
+    print(12)
+    print(request.method)
+    current_version = '375'
+    week_number = '1'
+    if request.method == 'POST':
+        data = request.form.to_dict()
+        print('helloworld'+data['apply_name'])
+        new_overtime = Overtime(apply_name=data['apply_name'], apply_reason=data['apply_reason'],
+                                current_version=data['current_version'],
+                                week_number=data['week_number'])
+        db.session.add(new_overtime)
+        return redirect(url_for(".tool_overtime"))
+        # data = request.get_json(force=True)
+        # print(data)
+        # print(data['apply_name'])
+
+        # new_dict = {}
+        # otstr = '{'
+        # for new_ot in new_overtimes:
+        #     otstr = otstr + new_ot.apply_name + ':' + new_ot.apply_reason + ','
+        # otstr = otstr[: len(otstr) - 1] + '}'
+        # print(jsonify(otstr))
+        # new_data = {"new_overtimes": otstr}
+        # return jsonify(new_data)
+        # # return make_response(new_overtime=new_overtime)
+    overtimes = Overtime.query.filter_by(current_version=current_version, week_number=week_number).all()
+    return render_template('tool_overtime.html', overtimes=overtimes, current_version=current_version,
+                           week_number=week_number)
