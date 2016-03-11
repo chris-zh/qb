@@ -32,23 +32,40 @@
     </table>
 </div>
 <div>
-    <form class="ver-form">
+    <form class="ver-form" >
         <input type="text" class="form-control ver-name" name="apply_name" placeholder="姓名"/>
         <input type="text" class="form-control ver-reason" name="apply_reason" placeholder="请假原因"/>
         <input type="hidden" name="current_version" value="{{current_version}}"/>
         <input type="hidden" name="week_number" value="{{week_number}}"/>
-        <button class="btn btn-default ver-add">新增</button>
-        <button class="btn btn-default ver-cancel">取消</button>
-        <button class="btn btn-default ver-submit">提交</button>
     </form>
+    <div>
+        <!--<button class="btn btn-default ver-add">新增</button>-->
+        <button class="btn btn-default ver-submit" >提交</button>
+        <button class="btn btn-default ver-cancel" >取消</button>
+    </div>
 </div>
 {% endblock%}
 {% block scripts %}
 {{super()}}
 <script>
-$(".ver-add").click(
+
+<!--$(".ver-add").click(-->
+    <!--function(){-->
+        <!--console.log($(".ver-name").val())-->
+        <!--$(".ver-submit").show()-->
+        <!--$(".ver-cancel").show()-->
+        <!--$(".ver-form").show()-->
+        <!--$(this).hide()-->
+    <!--}-->
+<!--)-->
+
+$(".ver-cancel").click(
     function(){
         console.log($(".ver-name").val())
+        $(".ver-form").show()
+        $(".ver-submit").hide()
+        $(this).hide()
+        $(".ver-form").hide()
     }
 )
 
@@ -72,6 +89,7 @@ $(".ver-submit").click(
     }
 **/
 );
+
 
 
 

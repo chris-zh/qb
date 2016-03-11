@@ -315,17 +315,16 @@ def tool_mail():
 
 @main.route('/tool-overtime', methods=['POST', 'GET'])
 def tool_overtime():
-    print(12)
-    print(request.method)
     current_version = '375'
     week_number = '1'
     if request.method == 'POST':
         data = request.form.to_dict()
-        print('helloworld'+data['apply_name'])
-        new_overtime = Overtime(apply_name=data['apply_name'], apply_reason=data['apply_reason'],
-                                current_version=data['current_version'],
-                                week_number=data['week_number'])
-        db.session.add(new_overtime)
+        is_exist = Overtime.query.filter_by(apply_name=data['apply_name'], week_number=data['week_number']).first()
+        if not is_exist:
+            new_overtime = Overtime(apply_name=data['apply_name'], apply_reason=data['apply_reason'],
+                                    current_version=data['current_version'],
+                                    week_number=data['week_number'])
+            db.session.add(new_overtime)
         return redirect(url_for(".tool_overtime"))
         # data = request.get_json(force=True)
         # print(data)

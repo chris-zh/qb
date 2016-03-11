@@ -6,12 +6,12 @@ from datetime import datetime
 class Overtime(db.Model):
     __bind_key__ = 'tpdev'
     __tablename__ = 'ebao_leave'
-    apply_id = db.Column(db.Integer, primary_key=True, default=str(time.time()))
-    apply_name = db.Column(db.String(64))
+    apply_id = db.Column(db.Integer, default=str(time.time()))
+    apply_name = db.Column(db.String(64), primary_key=True)
     apply_reason = db.Column(db.String(64))
     current_version = db.Column(db.String(64))
-    week_number = db.Column(db.String(64))
-    apply_date = db.Column(db.DateTime(), default=datetime.utcnow())
+    week_number = db.Column(db.String(64), primary_key=True)
+    apply_date = db.Column(db.DateTime(),  default=datetime.utcnow())
     overtime_date = db.Column(db.DateTime(), default=datetime.utcnow())
 
     def __repr__(self):
@@ -20,4 +20,4 @@ class Overtime(db.Model):
                                                        self.current_version, self.week_number)
 
 
-#new = Overtime(apply_name='test', apply_reason='test', current_version='3.91', week_number='9')
+        # new = Overtime(apply_name='test', apply_reason='test', current_version='3.91', week_number='9')
