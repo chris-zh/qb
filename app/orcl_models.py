@@ -4,7 +4,7 @@ from datetime import datetime
 
 
 class Overtime(db.Model):
-    __bind_key__ = 'tpdev'
+    # __bind_key__ = 'tpdev'
     __tablename__ = 'ebao_leave'
     apply_id = db.Column(db.Integer, default=str(time.time()))
     apply_name = db.Column(db.String(64), primary_key=True)

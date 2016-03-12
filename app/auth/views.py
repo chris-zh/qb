@@ -27,7 +27,7 @@ def login():
         if user is not None and user.verify_password(form.password.data):
             login_user(user, form.remember_me.data)
             return redirect(request.args.get('next') or url_for('main.index'))
-        flash('Invalid username or password.')
+        flash('用户名或密码错误.')
     return render_template('auth/login.html', form=form)
 
 
@@ -35,7 +35,7 @@ def login():
 @login_required
 def logout():
     logout_user()
-    flash('You have been logged out.')
+    flash('你已经退出麻辣香锅.')
     return redirect(url_for('main.index'))
 
 
@@ -52,8 +52,8 @@ def register():
         db.session.add(user)
         db.session.commit()
         token = user.generate_confirmation_token()
-        send_email(user.email, 'Confirm Your Account', 'auth/email/confirm', user=user, token=token)
-        flash('A confirmation email has been sent to you by email.')
+        send_email(user.email, '确认你的账户', 'auth/email/confirm', user=user, token=token)
+        flash('已经向你的邮箱发送了一封确认邮件.')
         return redirect(url_for('main.index'))
         # flash('You can now login.')
         # return redirect(url_for('auth.login'))
@@ -67,9 +67,9 @@ def confirm(token):
     if current_user.confirmed:
         return redirect(url_for('main.index'))
     if current_user.confirm(token):
-        flash('You have confirmed your account. Thanks!')
+        flash('确认账户成功. ')
     else:
-        flash('The confirmation link is invalid or has expired.')
+        flash('确认链接已失效或者过期.')
     return redirect(url_for('main.index'))
 
 
@@ -102,7 +102,7 @@ def resend_confirmation():
     token = current_user.generate_confirmation_token()
     send_email(current_user.email, 'Confirm Your Account',
                'auth/email/confirm', user=current_user, token=token)
-    flash('A new confirmation email has been sent to you by email.')
+    flash('一封新的确认邮件已经发送至你的邮箱.')
     return redirect(url_for('main.index'))
 
 
@@ -114,10 +114,10 @@ def change_password():
         if current_user.verify_password(form.old_password.data):
             current_user.password = form.password.data
             db.session.add(current_user)
-            flash('Your password has been updated.')
+            flash('密码修改成功.')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid password.')
+            flash('密码错误.')
     return render_template("auth/change_password.html", form=form)
 
 
@@ -134,8 +134,7 @@ def password_reset_request():
                        'auth/email/reset_password',
                        user=user, token=token,
                        next=request.args.get('next'))
-        flash('An email with instructions to reset your password has been '
-              'sent to you.')
+        flash('一封重置密码的引导邮件已经发送至你的邮箱.')
         return redirect(url_for('auth.login'))
     return render_template('auth/reset_password.html', form=form)
 
@@ -150,7 +149,7 @@ def password_reset(token):
         if user is None:
             return redirect(url_for('main.index'))
         if user.reset_password(token, form.password.data):
-            flash('Your password has been updated.')
+            flash('密码重置成功.')
             return redirect(url_for('auth.login'))
         else:
             return redirect(url_for('main.index'))
@@ -168,11 +167,10 @@ def change_email_request():
             send_email(new_email, 'Confirm your email address',
                        'auth/email/change_email',
                        user=current_user, token=token)
-            flash('An email with instructions to confirm your new email '
-                  'address has been sent to you.')
+            flash('一封确认邮件已经发送至你的邮箱.')
             return redirect(url_for('main.index'))
         else:
-            flash('Invalid email or password.')
+            flash('邮箱或密码错误.')
     return render_template("auth/change_email.html", form=form)
 
 
@@ -180,7 +178,7 @@ def change_email_request():
 @login_required
 def change_email(token):
     if current_user.change_email(token):
-        flash('Your email address has been updated.')
+        flash('邮箱修改成功.')
     else:
-        flash('Invalid request.')
+        flash('请求非法.')
     return redirect(url_for('main.index'))
