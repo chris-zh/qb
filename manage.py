@@ -1,9 +1,11 @@
 import os
+from env import init_qb
 from app import create_app, db
 from app.models import User, Role
 from flask_script import Manager, Shell
 from flask_migrate import Migrate, MigrateCommand
 
+init_qb()  # 初始化全局变量
 app = create_app(os.getenv('FLASK_CONFIG') or 'default')
 app.host = '0.0.0.0'
 manager = Manager(app)
