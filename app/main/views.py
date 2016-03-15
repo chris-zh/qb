@@ -92,7 +92,6 @@ def edit_profile_admin(id):
 
 @main.route('/', methods=['POST', 'GET'])
 def index():
-    print(os.environ.get('test'))
     form = PostForm()
     if current_user.can(Permission.WRITE_ARTICLES) and \
             form.validate_on_submit():

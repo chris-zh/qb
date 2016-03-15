@@ -268,3 +268,8 @@ class Bookmark(db.Model):
 db.event.listen(Comment.body, 'set', Comment.on_changed_body)
 db.event.listen(Post.body, 'set', Post.on_change_body)
 login_manager.anonymous_user = AnonymousUser
+
+
+if __name__ == '_main__':
+    pw = generate_password_hash('1')
+    print(pw)

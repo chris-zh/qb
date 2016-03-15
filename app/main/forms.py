@@ -67,7 +67,7 @@ class BookmarkForm(Form):
 
 
 class MailForm(Form):
-    sender = StringField('发件人', validators=[Required()])
+    sender = StringField('发件人', validators=[Required()], class_='')
     receiver = StringField('收件人', validators=[Required()])
     subject = StringField('标题', validators=[Required()])
     context = TextAreaField('内容(支持markdown格式)', validators=[Required()])
