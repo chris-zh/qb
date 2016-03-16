@@ -14,15 +14,14 @@ class Config:
     # 头像尺寸设置
     SMALL_IMAGE_SIZE = (35, 35)  # 用户小头像
     BIG_IMAGE_SIZE = (250, 250)  # 用户大头像
-    # 管理员邮箱设置 在.env中配置
-    FLASKY_MAIL_SUBJECT_PREFIX = '[麻辣香锅]'  # 前缀
     FLASKY_MAIL_SENDER = os.environ.get('FLASKY_MAIL_SENDER')  # 服务器邮件发件人
     FLASKY_ADMIN = os.environ.get('FLASKY_ADMIN')  # 服务器管理员邮箱
-    MAIL_SERVER = os.environ.get('MAIL_SERVER')  # 发件服务器
-    MAIL_PORT = os.environ.get('MAIL_PORT')  # 发件服务器端口
-    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')  # 服务器管理员账号
-    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')  # 服务器管理员密码
-    MAIL_USE_TLS = True
+    FLASKY_MAIL_SUBJECT_PREFIX = '[麻辣香锅]'  # 前缀
+    MAIL_SERVER = os.environ.get('MAIL_SERVER')
+    MAIL_PORT = 25
+    MAIL_USE_TLS = False
+    MAIL_USERNAME = os.environ.get('MAIL_USERNAME')
+    MAIL_PASSWORD = os.environ.get('MAIL_PASSWORD')
 
     @staticmethod
     def init_app(app):
@@ -44,6 +43,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+    DEBUG = True
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
                               'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 

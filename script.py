@@ -1,7 +1,9 @@
+from app.models import Role
 import os
-from werkzeug.security import generate_password_hash
 
-qb = {}  # 全局字典
+
+def init_roles():
+    Role.insert_roles()
 
 
 def init_qb():
@@ -19,5 +21,11 @@ def init_qb():
     else:
         print('失败！环境变量.env不存在')
 
+
+# 调用
+def run_scripts():
+    init_roles()
+
+
 if __name__ == '__main__':
-    print(os.environ.values())
+    run_scripts()

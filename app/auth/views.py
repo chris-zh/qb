@@ -164,10 +164,13 @@ def change_email_request():
         if current_user.verify_password(form.password.data):
             new_email = form.email.data
             token = current_user.generate_email_change_token(new_email)
-            send_email(new_email, 'Confirm your email address',
-                       'auth/email/change_email',
-                       user=current_user, token=token)
-            flash('一封确认邮件已经发送至你的邮箱.')
+            try:
+                send_email(new_email, 'Confirm your email address',
+                           'auth/email/change_email',
+                           user=current_user, token=token)
+                flash('一封确认邮件已经发送至你的邮箱.')
+            except:
+                flash('发送邮件失败，请查看日志.')
             return redirect(url_for('main.index'))
         else:
             flash('邮箱或密码错误.')
